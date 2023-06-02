@@ -43,76 +43,79 @@ class _AddUpdatePageState extends State<AddUpdatePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Form(
-          key: globalKey,
-          child: Column(
-            children: [
-              const SizedBox(height: 50),
-              Padding(
-                padding: const EdgeInsets.only(right: 10),
-                child: CustomAppBar(
-                  title: widget.noteModel !=null?'Update Note':'Add note',
-                  icon: Icons.check,
-                  onPressed: () {
-                    if (globalKey.currentState!.validate()) {
-                      final note = NoteModel(
-                        title: titleController!.text,
-                        description: descriptionController!.text,
-                        date: widget.noteModel!=null?widget.noteModel!.date :DateFormat('dd-mm-yyyy').format(DateTime.now()),
-                        color:currentIndex ,
-                      );
-                      if(widget.noteModel!=null){
-                        context.read<NoteBloc>().add(UpdateNoteEvent(note,widget.index!));
-                      }else{
-                        context.read<NoteBloc>().add(AddNoteEvent(note));
-                      }
-
-                      Navigator.pop(context);
-                    }
-                  },
-                ),
-              ),
-              const SizedBox(height: 50),
-              CustomTextFormField(
-                  labelText: 'Title',
-                  controller:titleController!,
-                  maximumLines: 1),
-              const SizedBox(height: 16),
-              CustomTextFormField(
-                controller: descriptionController!,
-                labelText: 'Description',
-                maximumLines: 4,
-              ),
-              const SizedBox(height: 20),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 100),
-                child: SizedBox(
-                  height: 100,
-                  child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: AppConstants.colors.length,
-                      itemBuilder: (context, index) {
-                        return  Padding(
-                          padding:  EdgeInsets.symmetric(horizontal: 8),
-                          child: GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                  currentIndex = index;
-                              });
-                             },
-                            child: ColorItem(
-                              color:AppConstants.colors[index],
-                              isActive: currentIndex == index,
-                              priority: AppConstants.priorities[index],
-                            ),
-                          ),
+      body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Form(
+            key: globalKey,
+            child: Column(
+              children: [
+                const SizedBox(height: 50),
+                Padding(
+                  padding: const EdgeInsets.only(right: 10),
+                  child: CustomAppBar(
+                    title: widget.noteModel !=null?'Update Note':'Add note',
+                    icon: Icons.check,
+                    onPressed: () {
+                      if (globalKey.currentState!.validate()) {
+                        final note = NoteModel(
+                          title: titleController!.text,
+                          description: descriptionController!.text,
+                          date: widget.noteModel!=null?widget.noteModel!.date :DateFormat('dd-mm-yyyy').format(DateTime.now()),
+                          color:currentIndex ,
                         );
-                      }),
-                )
-              ),
-            ],
+                        if(widget.noteModel!=null){
+                          context.read<NoteBloc>().add(UpdateNoteEvent(note,widget.index!));
+                        }else{
+                          context.read<NoteBloc>().add(AddNoteEvent(note));
+                        }
+
+                        Navigator.pop(context);
+                      }
+                    },
+                  ),
+                ),
+                const SizedBox(height: 50),
+                CustomTextFormField(
+                    labelText: 'Title',
+                    controller:titleController!,
+                    maximumLines: 1),
+                const SizedBox(height: 16),
+                CustomTextFormField(
+                  controller: descriptionController!,
+                  labelText: 'Description',
+                  maximumLines: 4,
+                ),
+                const SizedBox(height: 20),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 100),
+                  child: SizedBox(
+                    height: 100,
+                    child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: AppConstants.colors.length,
+                        itemBuilder: (context, index) {
+                          return  Padding(
+                            padding:  EdgeInsets.symmetric(horizontal: 8),
+                            child: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                    currentIndex = index;
+                                });
+                               },
+                              child: ColorItem(
+                                color:AppConstants.colors[index],
+                                isActive: currentIndex == index,
+                                priority: AppConstants.priorities[index],
+                              ),
+                            ),
+                          );
+                        }),
+                  )
+                ),
+              ],
+            ),
           ),
         ),
       ),
