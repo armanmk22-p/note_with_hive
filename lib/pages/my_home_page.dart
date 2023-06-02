@@ -1,36 +1,60 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo_bloc/bloc/note_bloc.dart';
+import 'package:todo_bloc/models/note_model.dart';
 import 'package:todo_bloc/pages/add_update_page.dart';
 import 'package:todo_bloc/widgets/custom_app_bar.dart';
 import 'package:todo_bloc/widgets/note_list_item.dart';
+import 'package:todo_bloc/widgets/note_list_item_test.dart';
 
-class MyHomePage extends StatelessWidget {
+class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 24),
-        child: Column(
-          children: [
-            SizedBox(height: 50),
-            CustomAppBar(title: 'Notes', icon: Icons.search),
-            Expanded(
-              child: NoteListItem(),
-            )
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(onPressed: (){
-          Navigator.of(context).push(
-            MaterialPageRoute(builder:(context) => AddUpdatePage())
-          );
+  State<MyHomePage> createState() => _MyHomePageState();
+}
 
+class _MyHomePageState extends State<MyHomePage> {
+  @override
+  void initState() {
+  //  BlocProvider.of<NoteBloc>(context).getAllNotes();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<NoteBloc, NoteState>(
+      builder: (context, state) {
+        List<NoteModel> notes = context.read<NoteBloc>().state.noteList;
+        return Scaffold(
+            body: SafeArea(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24),
+                child: Column(
+                  children: [
+                    SizedBox(height: 50),
+                    CustomAppBar(title: 'Notes', icon: Icons.search),
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount:notes.length ,
+                          itemBuilder: (context,index){
+                           return NoteListItemTest(noteModel: notes[index],index: index,);
+                      }),
+                    ),
+
+                  ],
+                ),
+              ),
+            ),
+            floatingActionButton: FloatingActionButton(onPressed: () {
+              Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => AddUpdatePage())
+              );
+            },
+              child: Icon(Icons.add),
+            )
+        );
       },
-        child: Icon(Icons.add),
-      )
     );
   }
 }

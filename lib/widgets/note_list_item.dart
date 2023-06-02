@@ -4,23 +4,21 @@ import 'package:intl/intl.dart';
 import 'package:todo_bloc/app_constants.dart';
 import 'package:todo_bloc/bloc/note_bloc.dart';
 
+import '../bloc/note_bloc.dart';
 import '../models/note_model.dart';
 
 
 
 class NoteListItem extends StatefulWidget {
-  const NoteListItem({Key? key}) : super(key: key);
+  const NoteListItem({Key? key,required this.noteList}) : super(key: key);
+  final List<NoteModel> noteList;
 
   @override
   State<NoteListItem> createState() => _NoteListItemState();
 }
 
 class _NoteListItemState extends State<NoteListItem> {
-  @override
-  void initState() {
-    BlocProvider.of<NoteBloc>(context).fetchAllNotes();
-    super.initState();
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -28,10 +26,10 @@ class _NoteListItemState extends State<NoteListItem> {
       padding: const EdgeInsets.symmetric(vertical: 16),
       child: BlocBuilder<NoteBloc,NoteState>(
         builder: (context, state) {
-          List<NoteModel> notes = BlocProvider.of<NoteBloc>(context).notes;
+         // List<NoteModel> notes = BlocProvider.of<NoteBloc>(context).notes;
            return ListView.builder(
              padding: EdgeInsets.zero,
-             itemCount: notes.length,
+           //  itemCount: notes.length,
              itemBuilder: (context, index) {
                return Padding(
                  padding: const EdgeInsets.symmetric(vertical: 4),
@@ -39,7 +37,7 @@ class _NoteListItemState extends State<NoteListItem> {
                    onTap: () {},
                    child: Container(
                      decoration: BoxDecoration(
-                       color:AppConstants.colors[notes[index].color],
+                     ///  color:AppConstants.colors[notes[index].color],
                        borderRadius: BorderRadius.circular(16),
                      ),
                      padding: EdgeInsets.only(
@@ -51,20 +49,26 @@ class _NoteListItemState extends State<NoteListItem> {
                        crossAxisAlignment: CrossAxisAlignment.end,
                        children: [
                          ListTile(
-                           title: Text(notes[index].title, style: TextStyle(
+                           title: Text('notes[index].title', style: TextStyle(
                              fontSize: 26,
                              color: Colors.black,
                            ),),
                            subtitle: Padding(
                              padding: const EdgeInsets.symmetric(vertical: 16),
                              child: Text(
-                               notes[index].description, style: TextStyle(
+                               'notes[index].description', style: TextStyle(
                                fontSize: 18,
                                color: Colors.black.withOpacity(0.4),
                              ),),
                            ),
                            trailing: IconButton(
-                             onPressed: () {},
+                             onPressed: () {
+                             // notes[index].delete();
+                            // BlocProvider.of<NoteBloc>(context).add(DeleteNoteEvent(note: note));
+                             // context.read<NoteBloc>().fetchAllNotes();
+                              // BlocProvider.of<NoteBloc>(context).fetchAllNotes();
+
+                             },
                              icon: const Icon(
                                Icons.delete,
                                color: Colors.black,
@@ -75,7 +79,7 @@ class _NoteListItemState extends State<NoteListItem> {
                          Padding(
                            padding: const EdgeInsets.symmetric(horizontal: 24),
                            child: Text(
-                              '',
+                             'notes[index].date',
                              style: TextStyle(
                                color: Colors.black.withOpacity(.4),
                              ),

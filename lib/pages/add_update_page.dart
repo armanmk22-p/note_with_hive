@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -9,7 +10,8 @@ import '../app_constants.dart';
 
 
 class AddUpdatePage extends StatefulWidget {
-  const AddUpdatePage({Key? key, this.noteModel}) : super(key: key);
+  const AddUpdatePage({Key? key, this.noteModel,this.index}) : super(key: key);
+  final int? index;
   final NoteModel? noteModel;
 
   @override
@@ -18,9 +20,25 @@ class AddUpdatePage extends StatefulWidget {
 
 class _AddUpdatePageState extends State<AddUpdatePage> {
   final GlobalKey<FormState> globalKey = GlobalKey();
-  final TextEditingController titleController = TextEditingController();
-  final TextEditingController descriptionController = TextEditingController();
+  TextEditingController? titleController;
+  TextEditingController? descriptionController;
   int currentIndex = 0;
+
+
+  @override
+  void initState() {
+    super.initState();
+    if(widget.noteModel!=null){
+      titleController = TextEditingController(text:widget.noteModel!.title);
+      descriptionController = TextEditingController(text:widget.noteModel!.description);
+      currentIndex = widget.noteModel!.color;
+    }else{
+      titleController = TextEditingController();
+      descriptionController = TextEditingController();
+    }
+
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -35,21 +53,22 @@ class _AddUpdatePageState extends State<AddUpdatePage> {
               Padding(
                 padding: const EdgeInsets.only(right: 10),
                 child: CustomAppBar(
-                  title: 'Add Note',
+                  title: widget.noteModel !=null?'Update Note':'Add note',
                   icon: Icons.check,
                   onPressed: () {
                     if (globalKey.currentState!.validate()) {
                       final note = NoteModel(
-                        title: titleController.text,
-                        description: descriptionController.text,
-                        date:  DateFormat('dd-mm-yyyy').format(DateTime.now()),
+                        title: titleController!.text,
+                        description: descriptionController!.text,
+                        date: widget.noteModel!=null?widget.noteModel!.date :DateFormat('dd-mm-yyyy').format(DateTime.now()),
                         color:currentIndex ,
                       );
+                      if(widget.noteModel!=null){
+                        context.read<NoteBloc>().add(UpdateNoteEvent(note,widget.index!));
+                      }else{
+                        context.read<NoteBloc>().add(AddNoteEvent(note));
+                      }
 
-                      // print(note.title);
-                      // print(note.date);
-                      // print(note.color);
-                      context.read<NoteBloc>().add(AddNoteEvent(note));
                       Navigator.pop(context);
                     }
                   },
@@ -58,11 +77,11 @@ class _AddUpdatePageState extends State<AddUpdatePage> {
               const SizedBox(height: 50),
               CustomTextFormField(
                   labelText: 'Title',
-                  controller: titleController,
+                  controller:titleController!,
                   maximumLines: 1),
               const SizedBox(height: 16),
               CustomTextFormField(
-                controller: descriptionController,
+                controller: descriptionController!,
                 labelText: 'Description',
                 maximumLines: 4,
               ),
@@ -80,11 +99,11 @@ class _AddUpdatePageState extends State<AddUpdatePage> {
                           child: GestureDetector(
                             onTap: () {
                               setState(() {
-                                currentIndex = index;
+                                  currentIndex = index;
                               });
                              },
                             child: ColorItem(
-                              color: AppConstants.colors[index],
+                              color:AppConstants.colors[index],
                               isActive: currentIndex == index,
                               priority: AppConstants.priorities[index],
                             ),
