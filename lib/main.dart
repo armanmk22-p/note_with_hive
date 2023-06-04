@@ -7,16 +7,32 @@ import 'package:todo_bloc/models/note_model.dart';
 import 'package:todo_bloc/pages/my_home_page.dart';
 
 void main() async {
+  //Initialize widgets before app running
   WidgetsFlutterBinding.ensureInitialized();
+  //Initialize hive
   await Hive.initFlutter();
+  //Registering the adapter
   Hive.registerAdapter(NoteModelAdapter());
+  //opening the box
   await Hive.openBox<NoteModel>('note_box');
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+
+  @override
+  void dispose() {
+    //Close all Hive boxes
+    Hive.close();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

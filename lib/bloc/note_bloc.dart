@@ -11,6 +11,7 @@ part 'note_state.dart';
 
 class NoteBloc extends Bloc<NoteEvent, NoteState> {
   List<NoteModel> notes =[];
+  late  Box box;
 
   NoteBloc() : super(NoteState.initial()) {
     on<AddNoteEvent>(_onAddNoteEvent);
@@ -19,14 +20,14 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
     }
 
     void _onAddNoteEvent(AddNoteEvent event,Emitter<NoteState> emit) async{
-    final box =  Hive.box<NoteModel>('note_box');
+    box =  Hive.box<NoteModel>('note_box');
     await box.add(event.note);
     getAllNotes();
      emit(NoteState(noteList: notes));
     }
 
   void _onUpdateNoteEvent(UpdateNoteEvent event, Emitter<NoteState> emit)async{
-    final box =  Hive.box<NoteModel>('note_box');
+    box =  Hive.box<NoteModel>('note_box');
     await box.putAt(event.index, event.note);
     getAllNotes();
     emit(NoteState(noteList: notes));
@@ -35,7 +36,7 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
 
 
     void _onDeleteNoteEvent(DeleteNoteEvent event, Emitter<NoteState> emit)async{
-      final box = Hive.box<NoteModel>('note_box');
+      box = Hive.box<NoteModel>('note_box');
       await event.note.delete();
       getAllNotes();
       emit(NoteState(noteList: notes));

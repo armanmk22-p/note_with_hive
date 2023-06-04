@@ -10,9 +10,10 @@ import '../app_constants.dart';
 
 
 class AddUpdatePage extends StatefulWidget {
-  const AddUpdatePage({Key? key, this.noteModel,this.index}) : super(key: key);
+  AddUpdatePage({Key? key, this.noteModel,this.index,required this.isEditing}) : super(key: key);
   final int? index;
   final NoteModel? noteModel;
+  bool isEditing = false;
 
   @override
   State<AddUpdatePage> createState() => _AddUpdatePageState();
@@ -28,7 +29,7 @@ class _AddUpdatePageState extends State<AddUpdatePage> {
   @override
   void initState() {
     super.initState();
-    if(widget.noteModel!=null){
+    if(widget.isEditing){
       titleController = TextEditingController(text:widget.noteModel!.title);
       descriptionController = TextEditingController(text:widget.noteModel!.description);
       currentIndex = widget.noteModel!.color;
@@ -55,17 +56,18 @@ class _AddUpdatePageState extends State<AddUpdatePage> {
                 Padding(
                   padding: const EdgeInsets.only(right: 10),
                   child: CustomAppBar(
-                    title: widget.noteModel !=null?'Update Note':'Add note',
+                  //  title: widget.noteModel !=null?'Update Note':'Add note',
+                    title: widget.isEditing?'Update Note':'Add note',
                     icon: Icons.check,
                     onPressed: () {
                       if (globalKey.currentState!.validate()) {
                         final note = NoteModel(
                           title: titleController!.text,
                           description: descriptionController!.text,
-                          date: widget.noteModel!=null?widget.noteModel!.date :DateFormat('dd-mm-yyyy').format(DateTime.now()),
+                          date:widget.isEditing?widget.noteModel!.date :DateFormat('dd-mm-yyyy').format(DateTime.now()),
                           color:currentIndex ,
                         );
-                        if(widget.noteModel!=null){
+                        if(widget.isEditing){
                           context.read<NoteBloc>().add(UpdateNoteEvent(note,widget.index!));
                         }else{
                           context.read<NoteBloc>().add(AddNoteEvent(note));
@@ -89,7 +91,7 @@ class _AddUpdatePageState extends State<AddUpdatePage> {
                 ),
                 const SizedBox(height: 20),
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 100),
+                  padding:const EdgeInsets.symmetric(horizontal: 100),
                   child: SizedBox(
                     height: 100,
                     child: ListView.builder(
@@ -97,7 +99,7 @@ class _AddUpdatePageState extends State<AddUpdatePage> {
                         itemCount: AppConstants.colors.length,
                         itemBuilder: (context, index) {
                           return  Padding(
-                            padding:  EdgeInsets.symmetric(horizontal: 8),
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
                             child: GestureDetector(
                               onTap: () {
                                 setState(() {
@@ -135,25 +137,28 @@ class CustomTextFormField extends StatelessWidget {
   final int? maximumLines;
   final String labelText;
 
-  // String validator(String? text) {
-  //   return 'Filed can\'t be Empty';
-  // }
+  String? fieldValidator(String? value) {
+    if(value == null || value.isEmpty){
+      return 'Filed can\'t be Empty';
+    }
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      // validator: validator,
+      validator: fieldValidator,
       controller: controller,
       maxLines: maximumLines,
       decoration: InputDecoration(
           labelText: labelText,
-          labelStyle: TextStyle(
+          labelStyle:const TextStyle(
             fontSize: 20,
             color: Colors.grey,
           ),
           enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(15),
-              borderSide: BorderSide(
+              borderSide:const BorderSide(
                 width: 2,
                 color: Colors.grey,
               ))),
@@ -186,8 +191,8 @@ class ColorItem extends StatelessWidget {
           radius: 18,
           backgroundColor: color,
         ),
-        SizedBox(height: 4,),
-        Text(priority,style: TextStyle(
+       const SizedBox(height: 4,),
+        Text(priority,style:const TextStyle(
           fontSize: 14,
           fontWeight: FontWeight.w700,
         ),),
