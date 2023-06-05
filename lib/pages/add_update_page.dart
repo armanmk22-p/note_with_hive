@@ -21,10 +21,9 @@ class AddUpdatePage extends StatefulWidget {
 
 class _AddUpdatePageState extends State<AddUpdatePage> {
   final GlobalKey<FormState> globalKey = GlobalKey();
-  TextEditingController? titleController;
-  TextEditingController? descriptionController;
+  late TextEditingController titleController;
+  late TextEditingController descriptionController;
   int currentIndex = 0;
-
 
   @override
   void initState() {
@@ -62,8 +61,8 @@ class _AddUpdatePageState extends State<AddUpdatePage> {
                     onPressed: () {
                       if (globalKey.currentState!.validate()) {
                         final note = NoteModel(
-                          title: titleController!.text,
-                          description: descriptionController!.text,
+                          title: titleController.text,
+                          description: descriptionController.text,
                           date:widget.isEditing?widget.noteModel!.date :DateFormat('dd-mm-yyyy').format(DateTime.now()),
                           color:currentIndex ,
                         );
@@ -73,6 +72,8 @@ class _AddUpdatePageState extends State<AddUpdatePage> {
                           context.read<NoteBloc>().add(AddNoteEvent(note));
                         }
 
+                        titleController.clear();
+                        descriptionController.clear();
                         Navigator.pop(context);
                       }
                     },
@@ -81,11 +82,11 @@ class _AddUpdatePageState extends State<AddUpdatePage> {
                 const SizedBox(height: 50),
                 CustomTextFormField(
                     labelText: 'Title',
-                    controller:titleController!,
+                    controller:titleController,
                     maximumLines: 1),
                 const SizedBox(height: 16),
                 CustomTextFormField(
-                  controller: descriptionController!,
+                  controller: descriptionController,
                   labelText: 'Description',
                   maximumLines: 4,
                 ),

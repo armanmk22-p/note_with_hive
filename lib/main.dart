@@ -3,18 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:todo_bloc/bloc/note_bloc.dart';
-import 'package:todo_bloc/models/note_model.dart';
 import 'package:todo_bloc/pages/my_home_page.dart';
+import 'package:todo_bloc/utilities/hive_injector.dart';
 
 void main() async {
   //Initialize widgets before app running
   WidgetsFlutterBinding.ensureInitialized();
-  //Initialize hive
-  await Hive.initFlutter();
-  //Registering the adapter
-  Hive.registerAdapter(NoteModelAdapter());
-  //opening the box
-  await Hive.openBox<NoteModel>('note_box');
+  HiveInjector.setup();
   runApp(const MyApp());
 }
 
