@@ -14,41 +14,64 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<NoteBloc, NoteState>(
-      builder: (context, state) {
-        List<NoteModel> notes = context.read<NoteBloc>().state.noteList;
-        return Scaffold(
-            body: SafeArea(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24),
-                child: Column(
-                  children: [
-                    SizedBox(height: 50),
-                    CustomAppBar(title: 'Notes', icon: Icons.search),
-                    Expanded(
-                      child: ListView.builder(
-                        itemCount:notes.length ,
-                          itemBuilder: (context,index){
-                           return NoteListItem(noteModel: notes[index],index: index,);
-                      }),
-                    ),
+    return BlocListener<NoteBloc, NoteState>(
+      listener: (context, state) {
 
-                  ],
+        switch (state.status) {
+          case 'update':
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text('Note update successfully')));
+            break;
+          case 'add':
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text('Note add successfully')));
+            break;
+          case 'delete':
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text('Note delete successfully')));
+            break;
+        }
+
+
+      },
+      child: BlocBuilder<NoteBloc, NoteState>(
+        builder: (context, state) {
+          List<NoteModel> notes = context.read<NoteBloc>().state.noteList;
+          return Scaffold(
+              body: SafeArea(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24),
+                  child: Column(
+                    children: [
+                      SizedBox(height: 50),
+                      CustomAppBar(title: 'Notes', icon: Icons.search),
+                      Expanded(
+                        child: ListView.builder(
+                            itemCount: notes.length,
+                            itemBuilder: (context, index) {
+                              return NoteListItem(
+                                noteModel: notes[index],
+                                index: index,
+                              );
+                            }),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            floatingActionButton: FloatingActionButton(onPressed: () {
-              Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => AddUpdatePage(isEditing: false,))
-              );
-            },
-              child: Icon(Icons.add),
-            )
-        );
-      },
+              floatingActionButton: FloatingActionButton(
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => AddUpdatePage(
+                            isEditing: false,
+                          )));
+                },
+                child: Icon(Icons.add),
+              ));
+        },
+      ),
     );
   }
 }

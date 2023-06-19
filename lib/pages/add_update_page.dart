@@ -67,9 +67,9 @@ class _AddUpdatePageState extends State<AddUpdatePage> {
                           color:currentIndex ,
                         );
                         if(widget.isEditing){
-                          context.read<NoteBloc>().add(UpdateNoteEvent(note,widget.index!));
+                          context.read<NoteBloc>().add(UpdateNoteEvent(note: note,index: widget.index!,status: 'update'));
                         }else{
-                          context.read<NoteBloc>().add(AddNoteEvent(note));
+                          context.read<NoteBloc>().add(AddNoteEvent(note: note,status: 'add'));
                         }
 
                         titleController.clear();

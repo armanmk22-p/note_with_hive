@@ -1,10 +1,14 @@
-
 import 'package:flutter/material.dart';
 
 import 'custom_icon.dart';
 
 class CustomAppBar extends StatelessWidget {
-  CustomAppBar({Key? key,required this.title,required this.icon,this.onPressed}) : super(key: key);
+  CustomAppBar({
+    Key? key,
+    required this.title,
+    required this.icon,
+    this.onPressed,
+  }) : super(key: key);
 
   final String title;
   final IconData icon;
